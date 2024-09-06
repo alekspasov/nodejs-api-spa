@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import './NavigationItems.css';
 
@@ -14,9 +14,9 @@ const NavigationItems = ({isAuth, mobile, onLogout}) => {
         <>
         {navItems.filter(item => item.auth === isAuth).map(item => (
             <li key={item.id}  className={['navigation-item', mobile ? 'mobile' : ''].join(' ')}>
-                <NavLink to={item.link} exact={item.exact}>
+                <Link to={item.link}>
                     {item.text}
-                </NavLink>
+                </Link>
             </li>
         ))}
         {isAuth && (

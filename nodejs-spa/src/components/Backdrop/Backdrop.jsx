@@ -1,11 +1,11 @@
 import './Backdrop.css';
 
 
-const Backdrop = ({onClick}) => {
+const Backdrop = ({onClick, open}) => {
 
     return (
         <div
-            className={['backdrop', props.open ? 'open' : ''].join(' ')}
+            className={['backdrop', open ? 'open' : ''].join(' ')}
             onClick={onClick}
         >
 

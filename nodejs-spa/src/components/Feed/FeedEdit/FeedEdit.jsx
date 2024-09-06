@@ -1,7 +1,7 @@
 import Backdrop from '../../Backdrop/Backdrop';
 import Modal from '../../Modal/Modal';
-import Input from '../../Form/Input/Input';
-import FilePicker from '../../Form/Input/FilePicker';
+import Input from '../../Folder/Input/Input';
+import FilePicker from '../../Folder/Input/FilePicker';
 import Image from '../../Image/Image';
 import { required, length } from '../../../util/validators';
 import { generateBase64FromImage } from '../../../util/image';

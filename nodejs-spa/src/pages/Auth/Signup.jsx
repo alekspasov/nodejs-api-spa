@@ -1,6 +1,6 @@
-import Input from '../../components/Form/Input/Input';
+import Input from '../../components/Folder/Input/Input';
 import Button from '../../components/Button/Button';
-import { required, length, email } from '../../util/validators';
+import { required, length, email } from '../../util/validators.js';
 import Auth from './Auth';
 import {useState} from 'react';
 

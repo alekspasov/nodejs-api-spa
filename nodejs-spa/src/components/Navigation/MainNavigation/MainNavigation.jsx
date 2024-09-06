@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import MobileToggle from '../MobileToggle/MobileToggle';
 import Logo from '../../Logo/Logo';
@@ -11,9 +11,9 @@ const MainNavigation = ({onOpenMobileNav, isAuth, onLogout}) => {
         <nav className="main-nav">
             <MobileToggle onOpen={onOpenMobileNav}/>
             <div className="main-nav__logo">
-                <NavLink to="/">
+                <Link to="/">
                     <Logo/>
-                </NavLink>
+                </Link>
             </div>
             <div className="spacer"/>
             <ul className="main-nav__items">
