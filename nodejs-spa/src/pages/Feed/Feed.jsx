@@ -32,7 +32,7 @@ const Feed = ({}) => {
                 return res.json();
             })
             .then(resData => {
-                setFeedData({...feedData, status: resData.status });
+                setFeedData( prevState=>({...prevState, status: resData.status }));
             })
             .catch(catchError);
 
@@ -41,16 +41,16 @@ const Feed = ({}) => {
 
     const loadPosts = direction => {
         if (direction) {
-            setFeedData({...feedData, postsLoading: true, posts: [] });
+            setFeedData( prevState=>({...prevState, postsLoading: true, posts: [] }));
         }
         let page = feedData.postPage;
         if (direction === 'next') {
             page++;
-            setFeedData({ ...feedData, postPage: page });
+            setFeedData(prevState=>({...prevState, postPage: page }));
         }
         if (direction === 'previous') {
             page--;
-            setFeedData({ ...feedData,postPage: page });
+            setFeedData(prevState=>({...prevState,postPage: page }));
         }
         fetch('URL')
             .then(res => {
@@ -60,12 +60,12 @@ const Feed = ({}) => {
                 return res.json();
             })
             .then(resData => {
-                setFeedData({
-                    ...feedData,
+                setFeedData( prevState=>({
+                    ...prevState,
                     posts: resData.posts,
                     totalPosts: resData.totalItems,
                     postsLoading: false
-                });
+                }));
             })
             .catch(catchError);
     };
@@ -86,7 +86,7 @@ const Feed = ({}) => {
         };
 
     const newPostHandler = () => {
-        setFeedData({...feedData, isEditing: true });
+        setFeedData( prevState=>({...prevState, isEditing: true }));
     };
 
     const startEditPostHandler = postId => {
@@ -102,14 +102,14 @@ const Feed = ({}) => {
     };
 
     const cancelEditHandler = () => {
-        setFeedData({...feedData, isEditing: false, editPost: null });
+        setFeedData( prevState=>({...prevState, isEditing: false, editPost: null }));
     };
 
     const  finishEditHandler = postData => {
-        setFeedData({
-            ...feedData,
+        setFeedData( prevState=>({
+            ...prevState,
             editLoading: true
-        });
+        }));
         // Set up data (with image!)
         let url = 'URL';
         if (feedData.editPost) {
@@ -152,22 +152,22 @@ const Feed = ({}) => {
             })
             .catch(err => {
                 console.log(err);
-                setFeedData({
-                    ...feedData,
+                setFeedData( prevState=>({
+                    ...prevState,
                     isEditing: false,
                     editPost: null,
                     editLoading: false,
                     error: err
-                });
+                }));
             });
     };
 
     const statusInputChangeHandler = (input, value) => {
-        setFeedData({...feedData, status: value });
+        setFeedData( prevState=>({...prevState, status: value }));
     };
 
     const  deletePostHandler = postId => {
-        setFeedData({...feedData, postsLoading: true });
+        setFeedData(prevState=>({...prevState, postsLoading: true }));
         fetch('URL')
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -184,16 +184,16 @@ const Feed = ({}) => {
             })
             .catch(err => {
                 console.log(err);
-                setFeedData({...feedData, postsLoading: false });
+                setFeedData( prevState=>({...feedData, postsLoading: false }));
             });
     };
 
     const errorHandler = () => {
-        setFeedData({...feedData, error: null });
+        setFeedData( prevState=>({...prevState, error: null }));
     };
 
     const catchError = error => {
-        setFeedData({...feedData, error: error });
+        setFeedData( prevState=>({...prevState, error: error }));
     };
 
     return (

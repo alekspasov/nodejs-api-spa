@@ -42,6 +42,7 @@ const Login = ({onLogin, loading}) => {
                 formIsValid = formIsValid && updatedForm[inputName].valid;
             }
             return {
+                ...prevState,
                 loginForm: updatedForm,
                 formIsValid: formIsValid
             };
@@ -51,6 +52,7 @@ const Login = ({onLogin, loading}) => {
     const inputBlurHandler = input => {
         setLoginForm(prevState => {
             return {
+                ...prevState,
                 loginForm: {
                     ...prevState.loginForm,
                     [input]: {

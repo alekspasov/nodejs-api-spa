@@ -23,12 +23,13 @@ const SinglePost  = () => {
                 return res.json();
             })
             .then(resData => {
-                setPost({
+                setPost( prevState =>({
+                    ...prevState,
                     title: resData.post.title,
                     author: resData.post.creator.name,
                     date: new Date(resData.post.createdAt).toLocaleDateString('en-US'),
                     content: resData.post.content
-                });
+                }));
             })
             .catch(err => {
                 console.log(err);

@@ -63,10 +63,10 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
         if (files) {
             generateBase64FromImage(files[0])
                 .then(b64 => {
-                    setPostForm({...post, imagePreview: b64 });
+                    setPostForm( prevState=>({...prevState, imagePreview: b64 }));
                 })
                 .catch(e => {
-                    setPostForm({...post, imagePreview: null });
+                    setPostForm( prevState =>({...prevState, imagePreview: null }));
                 });
         }
         setPostForm(prevState => {
@@ -97,6 +97,7 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
     const  inputBlurHandler = input => {
         setPostForm(prevState => {
             return {
+                ...prevState,
                 postForm: {
                     ...prevState.postForm,
                     [input]: {
@@ -109,11 +110,11 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
     };
 
     const cancelPostChangeHandler = () => {
-        setPostForm({
-            ...post,
+        setPostForm( prevState =>({
+            ...prevState,
             postForm: POST_FORM,
             formIsValid: false
-        });
+        }));
         onCancelEdit();
     };
 
@@ -124,11 +125,12 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
             content: post.postForm.content.value
         };
         onFinishEdit(newPost);
-        setPostForm({
+        setPostForm(prevState =>({
+            ...prevState,
             postForm: POST_FORM,
             formIsValid: false,
             imagePreview: null
-        });
+        }));
     };
 
 
