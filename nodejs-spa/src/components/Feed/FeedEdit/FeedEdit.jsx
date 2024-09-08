@@ -29,7 +29,7 @@ const POST_FORM = {
     }
 };
 
-const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
+const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit, loading }) => {
     const [post, setPostForm] = useState({
         postForm: POST_FORM,
         formIsValid: false,
@@ -55,7 +55,7 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
                     valid: true
                 }
             };
-            setPostForm({ postForm: updatedForm, formIsValid: true, imagePreview: post.imagePreview });
+            setPostForm(prevState => ({ ...prevState,postForm: updatedForm, formIsValid: true, imagePreview: post.imagePreview }));
         }
     }, [editing, selectedPost]);
 
@@ -135,7 +135,7 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
 
 
     return (
-        editing ? (
+        editing && (
             <>
                 <Backdrop onClick={cancelPostChangeHandler} />
                 <Modal
@@ -185,7 +185,7 @@ const FeedEdit = ({editing, selectedPost, onCancelEdit, onFinishEdit }) => {
                     </form>
                 </Modal>
             </>
-        ) : null
+        )
     )
 }
 

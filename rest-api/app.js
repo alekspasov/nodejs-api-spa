@@ -3,6 +3,12 @@ const express = require('express');
 const app = express();
 const feedRoutes = require('./routes/feed');
 const bodyParser = require('body-parser');
+const mongoose =  require('mongoose');
+
+const mongodbURI = require('./util/constants');
+
+
+
 
 app.use(bodyParser.json());
 
@@ -15,4 +21,7 @@ app.use((req, res, next)=>{
 
 app.use('/feed', feedRoutes);
 
-app.listen(3000);
+mongoose.connect(mongodbURI)
+    .then(result=>{
+        app.listen(8080);
+    }).catch(err=>console.log(err));

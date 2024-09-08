@@ -39,7 +39,7 @@ const SinglePost  = () => {
 
     return (
         <section className="single-post">
-            <h1>{this.state.title}</h1>
+            <h1>{post.title}</h1>
             <h2>
                 Created by {post.author} on {post.date}
             </h2>

@@ -4,7 +4,7 @@ import './Button.css';
 
 const Button = ({children, onClick, link, type, mode, design, disabled, loading}) => {
 
-        return link ? (
+        return !link ? (
             <button
                 className={[
                     'button',

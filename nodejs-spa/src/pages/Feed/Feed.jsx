@@ -11,17 +11,17 @@ import './Feed.css';
 import {useState, useEffect} from 'react';
 
 
-const Feed = ({}) => {
+const Feed = ({userId, token}) => {
     const [feedData, setFeedData] = useState({
-        isEditing: false,
         posts: [],
         totalPosts: 0,
         editPost: null,
         status: '',
         postPage: 1,
-        postsLoading: true,
-        editLoading: false
     })
+    const [isEditing, setIsEditing] = useState(false);
+    const [postsLoading, setPostsLoading] = useState(true);
+
 
     useEffect (() => {
         fetch('URL')
@@ -41,7 +41,8 @@ const Feed = ({}) => {
 
     const loadPosts = direction => {
         if (direction) {
-            setFeedData( prevState=>({...prevState, postsLoading: true, posts: [] }));
+            setFeedData( prevState=>({...prevState, posts: [] }));
+            setPostsLoading(true);
         }
         let page = feedData.postPage;
         if (direction === 'next') {
@@ -52,7 +53,7 @@ const Feed = ({}) => {
             page--;
             setFeedData(prevState=>({...prevState,postPage: page }));
         }
-        fetch('URL')
+        fetch('http://localhost:8080/feed/posts')
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch posts.');
@@ -64,8 +65,8 @@ const Feed = ({}) => {
                     ...prevState,
                     posts: resData.posts,
                     totalPosts: resData.totalItems,
-                    postsLoading: false
                 }));
+                setPostsLoading(false);
             })
             .catch(catchError);
     };
@@ -86,7 +87,7 @@ const Feed = ({}) => {
         };
 
     const newPostHandler = () => {
-        setFeedData( prevState=>({...prevState, isEditing: true }));
+        setIsEditing(true);
     };
 
     const startEditPostHandler = postId => {
@@ -95,14 +96,15 @@ const Feed = ({}) => {
 
             return {
                 ...prevState,
-                isEditing: true,
                 editPost: loadedPost
             };
         });
+        setIsEditing(true);
     };
 
     const cancelEditHandler = () => {
-        setFeedData( prevState=>({...prevState, isEditing: false, editPost: null }));
+        setFeedData( prevState=>({...prevState, editPost: null }));
+        setIsEditing(false);
     };
 
     const  finishEditHandler = postData => {
@@ -111,12 +113,22 @@ const Feed = ({}) => {
             editLoading: true
         }));
         // Set up data (with image!)
-        let url = 'URL';
+        let url = 'http://localhost:8080/feed/post';
+        let method = 'POST';
         if (feedData.editPost) {
             url = 'URL';
         }
 
-        fetch(url)
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                title: postData.title,
+                content: postData.content,
+            })
+        })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
                     throw new Error('Creating or editing a post failed!');
@@ -124,6 +136,7 @@ const Feed = ({}) => {
                 return res.json();
             })
             .then(resData => {
+                console.log(resData);
                 const post = {
                     _id: resData.post._id,
                     title: resData.post.title,
@@ -144,21 +157,21 @@ const Feed = ({}) => {
                     return {
                         ...prevState,
                         posts: updatedPosts,
-                        isEditing: false,
                         editPost: null,
                         editLoading: false
                     };
                 });
+                setIsEditing(false);
             })
             .catch(err => {
                 console.log(err);
                 setFeedData( prevState=>({
                     ...prevState,
-                    isEditing: false,
                     editPost: null,
                     editLoading: false,
                     error: err
                 }));
+                setIsEditing(false);
             });
     };
 
@@ -167,7 +180,7 @@ const Feed = ({}) => {
     };
 
     const  deletePostHandler = postId => {
-        setFeedData(prevState=>({...prevState, postsLoading: true }));
+        setPostsLoading(true);
         fetch('URL')
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
@@ -179,12 +192,13 @@ const Feed = ({}) => {
                 console.log(resData);
                 setFeedData(prevState => {
                     const updatedPosts = prevState.posts.filter(p => p._id !== postId);
-                    return {...prevState, posts: updatedPosts, postsLoading: false };
+                    return {...prevState, posts: updatedPosts};
                 });
+                setPostsLoading(false);
             })
             .catch(err => {
                 console.log(err);
-                setFeedData( prevState=>({...feedData, postsLoading: false }));
+                setPostsLoading(false);
             });
     };
 
@@ -200,9 +214,9 @@ const Feed = ({}) => {
         <>
             <ErrorHandler error={feedData.error} onHandle={errorHandler} />
             <FeedEdit
-                editing={feedData.isEditing}
+                editing={isEditing}
                 selectedPost={feedData.editPost}
-                loading={feedData.editLoading}
+                loading={postsLoading}
                 onCancelEdit={cancelEditHandler}
                 onFinishEdit={finishEditHandler}
             />
@@ -221,20 +235,20 @@ const Feed = ({}) => {
                 </form>
             </section>
             <section className="feed__control">
-                <Button mode="raised" design="accent" onClick={newPostHandler}>
+                <Button mode="raised" design="accent" onClick={()=>newPostHandler()}>
                     New Post
                 </Button>
             </section>
             <section className="feed">
-                {feedData.postsLoading && (
+                {postsLoading && (
                     <div style={{ textAlign: 'center', marginTop: '2rem' }}>
                         <Loader />
                     </div>
                 )}
-                {feedData.posts.length <= 0 && !feedData.postsLoading ? (
+                {feedData.posts.length <= 0 && !postsLoading ? (
                     <p style={{ textAlign: 'center' }}>No posts found.</p>
                 ) : null}
-                {!feedData.postsLoading && (
+                {!postsLoading && (
                     <Paginator
                         onPrevious={loadPosts.bind('previous')}
                         onNext={loadPosts.bind( 'next')}
