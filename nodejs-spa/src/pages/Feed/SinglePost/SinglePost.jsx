@@ -15,7 +15,7 @@ const SinglePost  = () => {
     const {postId} = useParams();
 
     useEffect(() => {
-        fetch('URL')
+        fetch('http://localhost:8080/feed/post/' + postId)
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch status');
@@ -27,13 +27,14 @@ const SinglePost  = () => {
                     ...prevState,
                     title: resData.post.title,
                     author: resData.post.creator.name,
+                    image: 'http://localhost:8080/' + resData.post.imageUrl,
                     date: new Date(resData.post.createdAt).toLocaleDateString('en-US'),
                     content: resData.post.content
                 }));
             })
             .catch(err => {
                 console.log(err);
-            });
+            }); 
     }, [postId]);
 
 

@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const app = express();
 const feedRoutes = require('./routes/feed');
@@ -8,9 +9,8 @@ const mongoose =  require('mongoose');
 const mongodbURI = require('./util/constants');
 
 
-
-
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,6 +20,13 @@ app.use((req, res, next)=>{
 });
 
 app.use('/feed', feedRoutes);
+
+app.use((error, req, res, enxt)=>{
+    console.log(error);
+    const status = error.statusCode || 500;
+    const message = error.message;
+    res.status(status).json({message:message})
+})
 
 mongoose.connect(mongodbURI)
     .then(result=>{
