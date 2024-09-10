@@ -34,7 +34,7 @@ const SinglePost  = () => {
             })
             .catch(err => {
                 console.log(err);
-            }); 
+            });
     }, [postId]);
 
 

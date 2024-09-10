@@ -25,10 +25,19 @@ exports.createPost = (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
+    if(!req.file){
+        const error = new Error('No image provided');
+        error.statusCode = 422;
+        throw error
+    }
+
+    const imageUrl = req.file.path.replace("\\" ,"/");
+
+
     const post = new Post({
         title: req.body.title,
         content: req.body.content,
-        imageUrl: 'images/airplane-background.jpg',
+        imageUrl: imageUrl,
         creator: {name: 'Maximilian'},
     })
     post.save().then(result => {
