@@ -63,7 +63,12 @@ const Feed = ({userId, token}) => {
             .then(resData => {
                 setFeedData( prevState=>({
                     ...prevState,
-                    posts: resData.posts,
+                    posts: resData.posts.map(post=> {
+                        return {
+                            ...post,
+                            imagePath: post.imageUrl
+                        }
+                    }),
                     totalPosts: resData.totalItems,
                 }));
                 setPostsLoading(false);
@@ -91,6 +96,7 @@ const Feed = ({userId, token}) => {
     };
 
     const startEditPostHandler = postId => {
+        console.log(postId);
         setFeedData(prevState => {
             const loadedPost = { ...prevState.posts.find(p => p._id === postId) };
 
@@ -120,7 +126,8 @@ const Feed = ({userId, token}) => {
         let url = 'http://localhost:8080/feed/post';
         let method = 'POST';
         if (feedData.editPost) {
-            url = 'URL';
+            url = 'http://localhost:8080/feed/post/' + feedData.editPost._id;
+            method= 'PUT';
         }
 
         fetch(url, {
@@ -262,8 +269,8 @@ const Feed = ({userId, token}) => {
                                 title={post.title}
                                 image={post.imageUrl}
                                 content={post.content}
-                                onStartEdit={startEditPostHandler.bind(post._id)}
-                                onDelete={deletePostHandler.bind( post._id)}
+                                onStartEdit={()=>startEditPostHandler(post._id)}
+                                onDelete={()=>deletePostHandler( post._id)}
                             />
                         ))}
                     </Paginator>
