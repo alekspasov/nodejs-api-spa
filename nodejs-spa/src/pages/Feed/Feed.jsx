@@ -53,7 +53,7 @@ const Feed = ({userId, token}) => {
             page--;
             setFeedData(prevState=>({...prevState,postPage: page }));
         }
-        fetch('http://localhost:8080/feed/posts')
+        fetch('http://localhost:8080/feed/posts?page=' + page)
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch posts.');
@@ -186,7 +186,10 @@ const Feed = ({userId, token}) => {
 
     const  deletePostHandler = postId => {
         setPostsLoading(true);
-        fetch('URL')
+        console.log(postId);
+        fetch('http://localhost:8080/feed/post/' + postId, {
+            method: 'DELETE',
+        })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
                     throw new Error('Deleting a post failed!');
@@ -255,8 +258,8 @@ const Feed = ({userId, token}) => {
                 ) : null}
                 {!postsLoading && (
                     <Paginator
-                        onPrevious={loadPosts.bind('previous')}
-                        onNext={loadPosts.bind( 'next')}
+                        onPrevious={()=>loadPosts('previous')}
+                        onNext={()=>loadPosts( 'next')}
                         lastPage={Math.ceil(feedData.totalPosts / 2)}
                         currentPage={feedData.postPage}
                     >
@@ -270,7 +273,7 @@ const Feed = ({userId, token}) => {
                                 image={post.imageUrl}
                                 content={post.content}
                                 onStartEdit={()=>startEditPostHandler(post._id)}
-                                onDelete={()=>deletePostHandler( post._id)}
+                                onDelete={()=>deletePostHandler(post._id)}
                             />
                         ))}
                     </Paginator>
