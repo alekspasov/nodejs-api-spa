@@ -18,7 +18,7 @@ function App({history}) {
     const [appState, setAppState] = useState({
         showBackdrop: false,
         showMobileNav: false,
-        isAuth: true,
+        isAuth: false,
         token: null,
         userId: null,
         authLoading: false,
@@ -102,7 +102,17 @@ function App({history}) {
     const  signupHandler = (event, authData) => {
         event.preventDefault();
        setAppState(prevState => ({...prevState, authLoading: true }));
-        fetch('URL')
+        fetch('http://localhost:8080/auth/signup',{
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify({
+                email: authData.signupForm.email.value,
+                password: authData.signupForm.password.value,
+                name: authData.signupForm.name.value
+            })
+        })
             .then(res => {
                 if (res.status === 422) {
                     throw new Error(
