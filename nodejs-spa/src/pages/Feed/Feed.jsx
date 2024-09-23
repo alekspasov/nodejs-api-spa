@@ -24,7 +24,11 @@ const Feed = ({userId, token}) => {
 
 
     useEffect (() => {
-        fetch('URL')
+        fetch('http://localhost:8080/auth/status',{
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch user status.');
@@ -82,7 +86,13 @@ const Feed = ({userId, token}) => {
 
     const statusUpdateHandler = event => {
             event.preventDefault();
-            fetch('URL')
+            fetch('http://localhost:8080/auth/status',{
+                method: 'POST',
+                headers: {
+                    Authorization: 'Bearer ' + token,
+                },
+                body: JSON.stringify({status: feedData.status}),
+            })
                 .then(res => {
                     if (res.status !== 200 && res.status !== 201) {
                         throw new Error("Can't update status!");
@@ -277,8 +287,8 @@ const Feed = ({userId, token}) => {
                             <Post
                                 key={post._id}
                                 id={post._id}
-                                author={post.creator.name}
                                 date={new Date(post.createdAt).toLocaleDateString('en-US')}
+                                author={post.creator.name}
                                 title={post.title}
                                 image={post.imageUrl}
                                 content={post.content}

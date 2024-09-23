@@ -3,7 +3,7 @@ import './SinglePost.css';
 import {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 
-const SinglePost  = () => {
+const SinglePost  = ({token}) => {
     const [post, setPost ] = useState({
         title: '',
         author: '',
@@ -16,9 +16,9 @@ const SinglePost  = () => {
 
     useEffect(() => {
         fetch('http://localhost:8080/feed/post/' + postId,{
-            // headers: {
-            //     Authorization: 'Bearer ' + token
-            // },
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
         })
             .then(res => {
                 if (res.status !== 200) {
