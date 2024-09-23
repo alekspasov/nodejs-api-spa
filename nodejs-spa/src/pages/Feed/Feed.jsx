@@ -53,7 +53,11 @@ const Feed = ({userId, token}) => {
             page--;
             setFeedData(prevState=>({...prevState,postPage: page }));
         }
-        fetch('http://localhost:8080/feed/posts?page=' + page)
+        fetch('http://localhost:8080/feed/posts?page=' + page, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error('Failed to fetch posts.');
@@ -131,6 +135,9 @@ const Feed = ({userId, token}) => {
         }
 
         fetch(url, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
             method: method,
             body: formData,
         })
@@ -189,6 +196,9 @@ const Feed = ({userId, token}) => {
         console.log(postId);
         fetch('http://localhost:8080/feed/post/' + postId, {
             method: 'DELETE',
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
         })
             .then(res => {
                 if (res.status !== 200 && res.status !== 201) {
