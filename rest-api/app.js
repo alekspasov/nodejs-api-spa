@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 
 const { v4: uuidv4 } = require('uuid');
@@ -30,6 +31,13 @@ const fileFilter = (req, file, cb) => {
 
 const mongodbURI = require('./util/constants');
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+}));
+
+
 
 app.use(bodyParser.json());
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
@@ -41,6 +49,7 @@ app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
     next();
 });
+
 
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
@@ -56,5 +65,9 @@ app.use((error, req, res, enxt)=>{
 
 mongoose.connect(mongodbURI)
     .then(result=>{
-        app.listen(8080);
+        const server = app.listen(8080);
+        const io = require('./socket').init(server);
+        io.on('connection', socket=>{
+            console.log('Client connected');
+        })
     }).catch(err=>console.log(err));

@@ -1,5 +1,8 @@
 const { validationResult } = require('express-validator');
 
+
+const io = require('../socket');
+
 const fs = require('fs');
 const path = require('path');
 const isAuth = require('../middleware/is-auth');
@@ -58,6 +61,11 @@ exports.createPost =async (req, res, next) => {
         user.posts.push(post)
 
         await user.save();
+
+        io.getIO().emit('posts',{
+            action: 'create',
+            post: {...post._doc, creator: {_id: req.userId, name: user.name}}
+        })
 
         res.status(201).json({
             message: 'Post created successfully!',
