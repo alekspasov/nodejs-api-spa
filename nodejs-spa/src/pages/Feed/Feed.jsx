@@ -46,6 +46,10 @@ const Feed = ({userId, token}) => {
         socket.on('posts', data => {
             if(data.action === 'create'){
                 addPost(data.post);
+            } else if(data.action === 'update'){
+                updatePost(data.post);
+            } else if(data.action === 'delete'){
+                loadPosts();
             }
         })
 
@@ -69,7 +73,19 @@ const Feed = ({userId, token}) => {
         });
     }
 
-
+    const updatePost  = post => {
+        setFeedData(prevState => {
+            const updatedPosts = [...prevState.posts];
+            const updatedPostIndex = updatedPosts.findIndex(p => p._id === post._id);
+            if(updatedPostIndex > -1){
+                updatedPosts[updatedPostIndex] = post;
+            }
+            return {
+                ...prevState,
+                posts: updatedPosts
+            };
+        })
+    }
 
     const loadPosts = direction => {
         if (direction) {
@@ -195,18 +211,8 @@ const Feed = ({userId, token}) => {
                     createdAt: resData.post.createdAt
                 };
                 setFeedData(prevState => {
-                    let updatedPosts = [...prevState.posts];
-                    if (prevState.editPost) {
-                        const postIndex = prevState.posts.findIndex(
-                            p => p._id === prevState.editPost._id
-                        );
-                        updatedPosts[postIndex] = post;
-                    } else if (prevState.posts.length < 2) {
-                        updatedPosts = prevState.posts.concat(post);
-                    }
                     return {
                         ...prevState,
-                        posts: updatedPosts,
                         editPost: null,
                         editLoading: false
                     };
@@ -246,10 +252,11 @@ const Feed = ({userId, token}) => {
             })
             .then(resData => {
                 console.log(resData);
-                setFeedData(prevState => {
-                    const updatedPosts = prevState.posts.filter(p => p._id !== postId);
-                    return {...prevState, posts: updatedPosts};
-                });
+                loadPosts();
+                // setFeedData(prevState => {
+                //     const updatedPosts = prevState.posts.filter(p => p._id !== postId);
+                //     return {...prevState, posts: updatedPosts};
+                // });
                 setPostsLoading(false);
             })
             .catch(err => {
